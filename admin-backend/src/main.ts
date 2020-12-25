@@ -11,6 +11,7 @@ async function bootstrap() {
     options: {
       urls: ['amqp://localhost:5672/smartranking'],
       queue: 'admin-backend',
+      noAck: false,
     },
   });
 
