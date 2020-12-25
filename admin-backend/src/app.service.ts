@@ -31,12 +31,7 @@ export class AppService {
   }
 
   async createCategory(category: Category): Promise<Category> {
-    try {
-      const createdCategory = new this.categoryModel(category);
-      return createdCategory.save();
-    } catch (err) {
-      this.logger.error(`Error: ${JSON.stringify(err.message)}`);
-      throw new RpcException(err.message);
-    }
+    const createdCategory = new this.categoryModel(category);
+    return createdCategory.save();
   }
 }
