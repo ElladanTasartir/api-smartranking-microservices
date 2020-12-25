@@ -2,17 +2,14 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Logger,
   Param,
   Post,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ClientProxy,
-  ClientProxyFactory,
-  Transport,
-} from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { FindParamDTO } from './dtos/find-param.dto';
@@ -21,17 +18,10 @@ import { FindParamDTO } from './dtos/find-param.dto';
 export class AppController {
   private logger = new Logger(AppController.name);
 
-  private clientAdminBackend: ClientProxy;
-
-  constructor() {
-    this.clientAdminBackend = ClientProxyFactory.create({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://localhost:5672/smartranking'],
-        queue: 'admin-backend',
-      },
-    });
-  }
+  constructor(
+    @Inject('admin-backend')
+    private clientAdminBackend: ClientProxy,
+  ) {}
 
   @Get('categories/:_id')
   @UsePipes(ValidationPipe)
