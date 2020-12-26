@@ -6,6 +6,7 @@ import {
   Logger,
   Param,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { FindParamDTO } from './dtos/find-param.dto';
+import { UpdateCategoryDTO } from './dtos/update-category.dto';
 
 @Controller('api/v1')
 export class AppController {
@@ -40,5 +42,17 @@ export class AppController {
     @Body() createCategoryDTO: CreateCategoryDTO,
   ): Observable<any[]> {
     return this.clientAdminBackend.send('create-category', createCategoryDTO);
+  }
+
+  @Put('categories/:_id')
+  @UsePipes(ValidationPipe)
+  updateCategory(
+    @Param() findParamDTO: FindParamDTO,
+    @Body() updateCategoryDTO: UpdateCategoryDTO,
+  ): Observable<any> {
+    return this.clientAdminBackend.send('update-category', {
+      id: findParamDTO._id,
+      category: updateCategoryDTO,
+    });
   }
 }
