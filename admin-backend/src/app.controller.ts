@@ -7,6 +7,7 @@ import {
   RpcException,
 } from '@nestjs/microservices';
 import { AppService } from './app.service';
+import { updateCategoryDTO } from './dtos/update-category.dto';
 import { Category } from './interfaces/categories/category.interface';
 
 const ackErrors: number[] = [11000];
@@ -18,12 +19,23 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @MessagePattern('get-categories')
-  async getCategories(): Promise<Category[]> {
+  async getCategories(@Ctx() context: RmqContext): Promise<Category[]> {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+
+    await channel.ack(message);
     return this.appService.getCategories();
   }
 
   @MessagePattern('get-category')
-  async getCategory(@Payload() _id: string): Promise<Category> {
+  async getCategory(
+    @Payload() _id: string,
+    @Ctx() context: RmqContext,
+  ): Promise<Category> {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+
+    await channel.ack(message);
     return this.appService.getCategory(_id);
   }
 
@@ -50,5 +62,22 @@ export class AppController {
 
       throw new RpcException(err.message);
     }
+  }
+
+  @MessagePattern('update-category')
+  async updateCategory(
+    @Payload() updateCategoryDTO: updateCategoryDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<Category> {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+
+    this.logger.verbose(`category ${JSON.stringify(updateCategoryDTO)}`);
+
+    const category = await this.appService.updateCategory(updateCategoryDTO);
+
+    channel.ack(message);
+
+    return category;
   }
 }

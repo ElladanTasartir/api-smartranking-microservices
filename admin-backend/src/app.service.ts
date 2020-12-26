@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { updateCategoryDTO } from './dtos/update-category.dto';
 import { Category } from './interfaces/categories/category.interface';
 import { Player } from './interfaces/players/player.interface';
 
@@ -33,5 +34,18 @@ export class AppService {
   async createCategory(category: Category): Promise<Category> {
     const createdCategory = new this.categoryModel(category);
     return createdCategory.save();
+  }
+
+  async updateCategory(
+    updateCategoryDTO: updateCategoryDTO,
+  ): Promise<Category> {
+    const { id, category } = updateCategoryDTO;
+
+    const foundCategory = await this.getCategory(id);
+
+    foundCategory.description = category.description;
+    foundCategory.events = category.events;
+
+    return foundCategory.save();
   }
 }
