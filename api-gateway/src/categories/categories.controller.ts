@@ -16,27 +16,27 @@ import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { FindParamDTO } from './dtos/find-param.dto';
 import { UpdateCategoryDTO } from './dtos/update-category.dto';
 
-@Controller('api/v1')
-export class AppController {
-  private logger = new Logger(AppController.name);
+@Controller('api/v1/categories')
+export class CategoriesController {
+  private logger = new Logger(CategoriesController.name);
 
   constructor(
     @Inject('admin-backend')
     private clientAdminBackend: ClientProxy,
   ) {}
 
-  @Get('categories/:_id')
+  @Get(':_id')
   @UsePipes(ValidationPipe)
   getCategory(@Param() findParamDTO: FindParamDTO): Observable<any> {
     return this.clientAdminBackend.send('get-category', findParamDTO._id);
   }
 
-  @Get('categories')
+  @Get()
   getCategories(): Observable<any> {
     return this.clientAdminBackend.send('get-categories', {});
   }
 
-  @Post('categories')
+  @Post()
   @UsePipes(ValidationPipe)
   createCategory(
     @Body() createCategoryDTO: CreateCategoryDTO,
@@ -44,7 +44,7 @@ export class AppController {
     return this.clientAdminBackend.send('create-category', createCategoryDTO);
   }
 
-  @Put('categories/:_id')
+  @Put(':_id')
   @UsePipes(ValidationPipe)
   updateCategory(
     @Param() findParamDTO: FindParamDTO,
