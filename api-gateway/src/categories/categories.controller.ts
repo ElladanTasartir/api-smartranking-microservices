@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Inject,
-  Logger,
   Param,
   Post,
   Put,
@@ -13,13 +12,11 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { CreateCategoryDTO } from './dtos/create-category.dto';
-import { FindParamDTO } from './dtos/find-param.dto';
+import { FindParamDTO } from '../common/dtos/find-param.dto';
 import { UpdateCategoryDTO } from './dtos/update-category.dto';
 
 @Controller('api/v1/categories')
 export class CategoriesController {
-  private logger = new Logger(CategoriesController.name);
-
   constructor(
     @Inject('admin-backend')
     private clientAdminBackend: ClientProxy,
