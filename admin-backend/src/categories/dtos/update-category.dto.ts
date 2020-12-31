@@ -1,4 +1,4 @@
-import { Category } from 'src/interfaces/categories/category.interface';
+import { Category } from '../interfaces/category.interface';
 
 export class updateCategoryDTO {
   id: string;
