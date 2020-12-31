@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PlayerSchema } from './categories/interfaces/players/player.schema';
 import { CategoriesModule } from './categories/categories.module';
+import { PlayersModule } from './players/players.module';
 
 @Module({
   imports: [
@@ -14,13 +14,8 @@ import { CategoriesModule } from './categories/categories.module';
         useFindAndModify: false,
       },
     ),
-    MongooseModule.forFeature([
-      {
-        name: 'Player',
-        schema: PlayerSchema,
-      },
-    ]),
     CategoriesModule,
+    PlayersModule,
   ],
 })
 export class AppModule {}
