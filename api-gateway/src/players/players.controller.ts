@@ -32,7 +32,7 @@ export class PlayersController {
   @Get('/:_id')
   @UsePipes(ValidationPipe)
   getPlayerById(@Param() findParamDTO: FindParamDTO): Observable<any> {
-    return this.clientAdminBackend.send('get-player', findParamDTO);
+    return this.clientAdminBackend.send('get-player', findParamDTO._id);
   }
 
   @Post()
@@ -48,7 +48,7 @@ export class PlayersController {
     @Body() editPlayerDTO: EditPlayerDTO,
   ): Observable<any> {
     return this.clientAdminBackend.send('update-player', {
-      id: findParamDTO,
+      id: findParamDTO._id,
       player: editPlayerDTO,
     });
   }
@@ -57,6 +57,6 @@ export class PlayersController {
   @UsePipes(ValidationPipe)
   @Delete('/:_id')
   deletePlayer(@Param() findParamDTO: FindParamDTO): Observable<void> {
-    return this.clientAdminBackend.emit('delete-player', findParamDTO);
+    return this.clientAdminBackend.emit('delete-player', findParamDTO._id);
   }
 }
