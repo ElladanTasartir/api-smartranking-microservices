@@ -3,18 +3,15 @@ import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { updateCategoryDTO } from './dtos/update-category.dto';
-import { Category } from './interfaces/categories/category.interface';
-import { Player } from './interfaces/players/player.interface';
+import { Category } from './interfaces/category.interface';
 
 @Injectable()
-export class AppService {
-  private readonly logger = new Logger(AppService.name);
+export class CategoriesService {
+  private readonly logger = new Logger(CategoriesService.name);
 
   constructor(
     @InjectModel('Category')
     private readonly categoryModel: Model<Category>,
-    @InjectModel('Player')
-    private readonly playerModel: Model<Player>,
   ) {}
 
   async getCategories(): Promise<Category[]> {

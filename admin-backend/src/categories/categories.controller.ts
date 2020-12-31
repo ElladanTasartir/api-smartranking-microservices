@@ -6,17 +6,17 @@ import {
   RmqContext,
   RpcException,
 } from '@nestjs/microservices';
-import { AppService } from './app.service';
+import { CategoriesService } from './categories.service';
 import { updateCategoryDTO } from './dtos/update-category.dto';
-import { Category } from './interfaces/categories/category.interface';
+import { Category } from './interfaces/category.interface';
 
 const ackErrors: number[] = [11000];
 
 @Controller()
-export class AppController {
-  private readonly logger = new Logger(AppController.name);
+export class CategoriesController {
+  private readonly logger = new Logger(CategoriesController.name);
 
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @MessagePattern('get-categories')
   async getCategories(@Ctx() context: RmqContext): Promise<Category[]> {
@@ -24,7 +24,7 @@ export class AppController {
     const message = context.getMessage();
 
     await channel.ack(message);
-    return this.appService.getCategories();
+    return this.categoriesService.getCategories();
   }
 
   @MessagePattern('get-category')
@@ -36,7 +36,7 @@ export class AppController {
     const message = context.getMessage();
 
     await channel.ack(message);
-    return this.appService.getCategory(_id);
+    return this.categoriesService.getCategory(_id);
   }
 
   @MessagePattern('create-category')
@@ -50,7 +50,9 @@ export class AppController {
     this.logger.verbose(`category: ${JSON.stringify(category)}`);
 
     try {
-      const createdCategory = await this.appService.createCategory(category);
+      const createdCategory = await this.categoriesService.createCategory(
+        category,
+      );
       await channel.ack(message);
 
       return createdCategory;
@@ -74,7 +76,9 @@ export class AppController {
 
     this.logger.verbose(`category ${JSON.stringify(updateCategoryDTO)}`);
 
-    const category = await this.appService.updateCategory(updateCategoryDTO);
+    const category = await this.categoriesService.updateCategory(
+      updateCategoryDTO,
+    );
 
     channel.ack(message);
 

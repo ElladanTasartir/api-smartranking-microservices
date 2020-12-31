@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { CategorySchema } from './interfaces/categories/category.schema';
-import { PlayerSchema } from './interfaces/players/player.schema';
+import { PlayerSchema } from './categories/interfaces/players/player.schema';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -18,16 +16,11 @@ import { PlayerSchema } from './interfaces/players/player.schema';
     ),
     MongooseModule.forFeature([
       {
-        name: 'Category',
-        schema: CategorySchema,
-      },
-      {
         name: 'Player',
         schema: PlayerSchema,
       },
     ]),
+    CategoriesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
