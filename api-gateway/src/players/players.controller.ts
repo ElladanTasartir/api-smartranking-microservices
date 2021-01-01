@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpStatus,
   Inject,
   Param,
   Post,
@@ -53,7 +54,7 @@ export class PlayersController {
     });
   }
 
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UsePipes(ValidationPipe)
   @Delete('/:_id')
   deletePlayer(@Param() findParamDTO: FindParamDTO): Observable<void> {
