@@ -7,4 +7,7 @@ export class EditPlayerDTO {
 
   @IsOptional()
   readonly name: string;
+
+  @IsOptional()
+  readonly category: string;
 }
