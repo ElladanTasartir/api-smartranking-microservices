@@ -8,6 +8,7 @@ export const PlayerSchema = new Schema(
     ranking: String,
     position: Number,
     avatarUrl: String,
+    category: { type: Schema.Types.ObjectId, ref: 'Category' },
   },
   {
     timestamps: true,
