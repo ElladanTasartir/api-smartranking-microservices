@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEmail, IsPhoneNumber } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsPhoneNumber, IsMongoId } from 'class-validator';
 
 export class CreatePlayerDTO {
   @IsNotEmpty()
@@ -11,6 +11,6 @@ export class CreatePlayerDTO {
   @IsNotEmpty()
   readonly name: string;
 
-  @IsNotEmpty()
+  @IsMongoId()
   readonly category: string;
 }

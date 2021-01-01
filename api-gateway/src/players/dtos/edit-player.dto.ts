@@ -1,4 +1,4 @@
-import { IsOptional, IsPhoneNumber } from 'class-validator';
+import { IsMongoId, IsOptional, IsPhoneNumber } from 'class-validator';
 
 export class EditPlayerDTO {
   @IsOptional()
@@ -9,5 +9,6 @@ export class EditPlayerDTO {
   readonly name: string;
 
   @IsOptional()
+  @IsMongoId()
   readonly category: string;
 }
