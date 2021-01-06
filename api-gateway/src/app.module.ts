@@ -1,8 +1,18 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { CategoriesModule } from './categories/categories.module';
 import { PlayersModule } from './players/players.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
-  imports: [CategoriesModule, PlayersModule],
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'tmp', 'images'),
+    }),
+    CategoriesModule,
+    PlayersModule,
+    UploadsModule,
+  ],
 })
 export class AppModule {}
