@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UploadsModule } from '../uploads/uploads.module';
 import { PlayersController } from './players.controller';
 
 @Module({
@@ -14,6 +15,7 @@ import { PlayersController } from './players.controller';
         },
       },
     ]),
+    UploadsModule,
   ],
   controllers: [PlayersController],
 })
