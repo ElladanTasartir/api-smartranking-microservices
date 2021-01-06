@@ -6,9 +6,12 @@ import {
   HttpCode,
   HttpStatus,
   Inject,
+  NotFoundException,
   Param,
   Post,
   Put,
+  UploadedFile,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -17,12 +20,15 @@ import { ClientProxy } from '@nestjs/microservices';
 import { CreatePlayerDTO } from './dtos/create-player.dto';
 import { EditPlayerDTO } from './dtos/edit-player.dto';
 import { FindParamDTO } from '../common/dtos/find-param.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { LocalService } from 'src/uploads/local.service';
 
 @Controller('api/v1/players')
 export class PlayersController {
   constructor(
     @Inject('admin-backend')
     private clientAdminBackend: ClientProxy,
+    private localService: LocalService,
   ) {}
 
   @Get()
@@ -40,6 +46,28 @@ export class PlayersController {
   @UsePipes(ValidationPipe)
   createPlayer(@Body() createPlayerDTO: CreatePlayerDTO): Observable<any> {
     return this.clientAdminBackend.send('create-player', createPlayerDTO);
+  }
+
+  @Post('/:_id/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(
+    @Param() findParamDTO: FindParamDTO,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const player = await this.clientAdminBackend.send(
+      'get-player',
+      findParamDTO._id,
+    ).toPromise;
+
+    if (!player) {
+      throw new NotFoundException(
+        `Player with ID "${findParamDTO._id}" does not exist`,
+      );
+    }
+
+    const fileName = await this.localService.uploadFile(file, findParamDTO._id);
+
+    return { fileName };
   }
 
   @Put('/:_id')
