@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { EditPlayerDTO } from './dtos/edit-player.dto';
 import { RpcException } from '@nestjs/microservices';
 import { CategoriesService } from 'src/categories/categories.service';
+import { UpdatePlayerAvatarDTO } from './dtos/update-player-avatar.dto';
 
 @Injectable()
 export class PlayersService {
@@ -62,6 +63,24 @@ export class PlayersService {
     }
 
     return foundPlayer;
+  }
+
+  async updatePlayerAvatar(
+    updatePlayerAvatarDTO: UpdatePlayerAvatarDTO,
+  ): Promise<Player> {
+    const { id, avatarUrl } = updatePlayerAvatarDTO;
+
+    return this.playerModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          avatarUrl,
+        },
+      },
+      {
+        new: true,
+      },
+    );
   }
 
   async deletePlayer(id: string): Promise<void> {

@@ -5,8 +5,10 @@ import {
   MessagePattern,
   Payload,
   RmqContext,
+  RpcException,
 } from '@nestjs/microservices';
 import { EditPlayerDTO } from './dtos/edit-player.dto';
+import { UpdatePlayerAvatarDTO } from './dtos/update-player-avatar.dto';
 import { Player } from './interfaces/player.interface';
 import { PlayersService } from './players.service';
 
@@ -61,6 +63,26 @@ export class PlayersController {
 
     channel.ack(message);
     return updatedPlayer;
+  }
+
+  @MessagePattern('update-player-avatar')
+  async updatePlayerAvatar(
+    @Payload() updatePlayerAvatarDTO: UpdatePlayerAvatarDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<Player> {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+
+    try {
+      const player = await this.playersService.updatePlayerAvatar(
+        updatePlayerAvatarDTO,
+      );
+
+      channel.ack(message);
+      return player;
+    } catch (err) {
+      throw new RpcException(err.messsage);
+    }
   }
 
   @EventPattern('delete-player')
