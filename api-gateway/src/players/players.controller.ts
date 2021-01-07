@@ -6,7 +6,6 @@ import {
   HttpCode,
   HttpStatus,
   Inject,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -20,6 +19,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { CreatePlayerDTO } from './dtos/create-player.dto';
 import { EditPlayerDTO } from './dtos/edit-player.dto';
 import { FindParamDTO } from '../common/dtos/find-param.dto';
+import { UpdatePlayerAvatarDTO } from './dtos/update-player-avatar.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LocalService } from 'src/uploads/local.service';
 
@@ -51,23 +51,29 @@ export class PlayersController {
   @Post('/:_id/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-    @Param() findParamDTO: FindParamDTO,
+    @Param(ValidationPipe) findParamDTO: FindParamDTO,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const player = await this.clientAdminBackend.send(
-      'get-player',
-      findParamDTO._id,
-    ).toPromise;
-
-    if (!player) {
-      throw new NotFoundException(
-        `Player with ID "${findParamDTO._id}" does not exist`,
-      );
-    }
+    await this.clientAdminBackend
+      .send('get-player', findParamDTO._id)
+      .toPromise();
 
     const fileName = await this.localService.uploadFile(file, findParamDTO._id);
 
-    return { fileName };
+    return this.updatePlayerAvatar({
+      id: findParamDTO._id,
+      avatarUrl: fileName,
+    });
+  }
+
+  @UsePipes(ValidationPipe)
+  updatePlayerAvatar(
+    updatePlayerAvatarDTO: UpdatePlayerAvatarDTO,
+  ): Observable<any> {
+    return this.clientAdminBackend.send(
+      'update-player-avatar',
+      updatePlayerAvatarDTO,
+    );
   }
 
   @Put('/:_id')
