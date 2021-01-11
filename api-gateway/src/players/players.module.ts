@@ -19,7 +19,7 @@ import { PlayersController } from './players.controller';
           transport: Transport.RMQ,
           options: {
             urls: [configService.get<string>('RABBITMQ_HOST')],
-            queue: configService.get<string>('RABBITMQ_QUEUE'),
+            queue: configService.get<string>('RABBITMQ_QUEUE_ADMIN'),
           },
         };
         return ClientProxyFactory.create(clientConfig);
