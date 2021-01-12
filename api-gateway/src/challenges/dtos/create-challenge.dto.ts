@@ -17,6 +17,9 @@ export class CreateChallengeDTO {
   @IsMongoId()
   challenger: string;
 
+  @IsNotEmpty()
+  category: string;
+
   @IsArray()
   @ArrayMinSize(2)
   @ArrayMaxSize(2)
