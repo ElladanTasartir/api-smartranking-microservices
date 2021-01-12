@@ -5,6 +5,7 @@ import {
   RmqOptions,
   Transport,
 } from '@nestjs/microservices';
+import { ChallengesController } from './challenges.controller';
 
 @Module({
   providers: [
@@ -22,6 +23,21 @@ import {
       },
       inject: [ConfigService],
     },
+    {
+      provide: 'admin-backend',
+      useFactory: (configService: ConfigService) => {
+        const clientConfig: RmqOptions = {
+          transport: Transport.RMQ,
+          options: {
+            urls: [configService.get<string>('RABBITMQ_HOST')],
+            queue: configService.get<string>('RABBITMQ_QUEUE_ADMIN'),
+          },
+        };
+        return ClientProxyFactory.create(clientConfig);
+      },
+      inject: [ConfigService],
+    },
   ],
+  controllers: [ChallengesController],
 })
 export class ChallengesModule {}
