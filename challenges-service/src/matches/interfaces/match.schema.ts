@@ -7,7 +7,6 @@ export const MatchSchema = new Schema(
     players: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Player',
       },
     ],
     result: [{ set: { type: String } }],
