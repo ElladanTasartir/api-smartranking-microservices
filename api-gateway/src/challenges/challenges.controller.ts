@@ -30,7 +30,7 @@ export class ChallengesController {
     private clientAdminBackend: ClientProxy,
   ) {}
 
-  @Get('/:_id')
+  @Get('/:_id/player')
   @UsePipes(ValidationPipe)
   async getChallenges(
     @Param() findParamDTO: FindParamDTO,
@@ -40,6 +40,12 @@ export class ChallengesController {
       .toPromise();
 
     return this.clientChallengesService.send('get-challenges', player._id);
+  }
+
+  @Get('/:_id')
+  @UsePipes(ValidationPipe)
+  getChallengeById(@Param() findParamDTO: FindParamDTO): Observable<any> {
+    return this.clientChallengesService.send('get-challenge', findParamDTO._id);
   }
 
   @Post()
