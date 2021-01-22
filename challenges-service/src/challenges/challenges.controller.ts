@@ -27,6 +27,18 @@ export class ChallengesController {
     return this.challengesService.findChallengesByPlayerId(_id);
   }
 
+  @MessagePattern('get-challenge')
+  async getChallengeById(
+    @Payload() _id: string,
+    @Ctx() context: RmqContext,
+  ): Promise<Challenge> {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+
+    channel.ack(message);
+    return this.challengesService.findChallengeById(_id);
+  }
+
   @MessagePattern('create-challenge')
   async createChallenge(
     @Payload() challenge: Challenge,
