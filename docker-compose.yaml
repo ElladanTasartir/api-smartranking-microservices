@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  mongodb:
+    container_name: mongodb-smartranking
+    image: mongo:latest
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: smartranking
+      MONGO_INITDB_ROOT_PASSWORD: smartranking
+    restart: on-failure
+    ports:
+      - 5432:5432
+
+  rabbitmq:
+    container_name: rabbitmq-smartranking
+    image: rabbitmq:3-management
+    ports: 
+      - 5672:5672
+      - 15672:15672
+  
+  api-gateway:
+    restart: on-failure
+    depends_on: 
+      - mongodb
+      - rabbitmq
+    container_name: api-gateway-smartranking
+    volumes:
+      - ./api-gateway:/usr/src/app:cached
+      - ./api-gateway/node_modules
+    build: 
+      context: ./api-gateway
+    links:
+      - mongodb:mongodb
+      - rabbitmq:rabbitmq
+    ports: 
+      - 8080:8080
+    command: yarn start:dev
+
+  admin-backend:
+    restart: on-failure
+    depends_on: 
+      - mongodb
+      - rabbitmq
+    container_name: admin-backend-smartranking
+    volumes:
+      - ./admin-backend:/usr/src/app:cached
+      - ./admin-backend/node_modules
+    build: 
+      context: ./admin-backend
+    links:
+      - mongodb:mongodb
+      - rabbitmq:rabbitmq
+    command: yarn start:dev
+
+  challenges-service:
+    restart: on-failure
+    depends_on: 
+      - mongodb
+      - rabbitmq
+    container_name: challenges-service-smartranking
+    volumes:
+      - ./challenges-service:/usr/src/app:cached
+      - ./challenges-service/node_modules
+    build:
+      context: ./challenges-service
+    links:
+      - mongodb:mongodb
+      - rabbitmq:rabbitmq
+    command: yarn start:dev
+    
