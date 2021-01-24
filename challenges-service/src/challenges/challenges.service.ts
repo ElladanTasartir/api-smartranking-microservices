@@ -3,6 +3,7 @@ import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Challenge } from './interfaces/challenge.interface';
+import { ChallengeStatus } from './enums/challenge-status.enum';
 
 @Injectable()
 export class ChallengesService {
@@ -27,6 +28,8 @@ export class ChallengesService {
 
   async createChallenge(challenge: Challenge): Promise<Challenge> {
     const createdChallenge = new this.challengesModel(challenge);
+
+    createdChallenge.status = ChallengeStatus.PENDING;
 
     return createdChallenge.save();
   }
