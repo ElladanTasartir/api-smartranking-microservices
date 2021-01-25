@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Challenge } from './interfaces/challenge.interface';
 import { ChallengeStatus } from './enums/challenge-status.enum';
+import { UpdateChallengeDTO } from './dtos/update-challenge.dto';
 
 @Injectable()
 export class ChallengesService {
@@ -32,5 +33,22 @@ export class ChallengesService {
     createdChallenge.status = ChallengeStatus.PENDING;
 
     return createdChallenge.save();
+  }
+
+  async updateChallenge(
+    updateChallengeDTO: UpdateChallengeDTO,
+  ): Promise<Challenge> {
+    const { _id, challenge } = updateChallengeDTO;
+
+    const foundChallenge = await this.findChallengeById(_id);
+
+    if (foundChallenge.status !== ChallengeStatus.PENDING) {
+      throw new RpcException(`Cannot update challenge that is not PENDING`);
+    }
+
+    foundChallenge.status = challenge.status;
+    foundChallenge.answered_at = challenge.date;
+
+    return foundChallenge.save();
   }
 }

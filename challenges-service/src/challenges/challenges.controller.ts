@@ -7,6 +7,7 @@ import {
   RpcException,
 } from '@nestjs/microservices';
 import { ChallengesService } from './challenges.service';
+import { UpdateChallengeDTO } from './dtos/update-challenge.dto';
 import { Challenge } from './interfaces/challenge.interface';
 
 @Controller('api/v1/challenges')
@@ -59,6 +60,27 @@ export class ChallengesController {
       throw new RpcException(
         `There was an error creating the challenge: ${err.message}`,
       );
+    }
+  }
+
+  @MessagePattern('update-challenge')
+  async updateChallenge(
+    @Payload() updateChallengeDTO: UpdateChallengeDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<Challenge> {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+
+    try {
+      const updatedChallenge = await this.challengesService.updateChallenge(
+        updateChallengeDTO,
+      );
+
+      channel.ack(message);
+
+      return updatedChallenge;
+    } catch (err) {
+      throw new RpcException(err.message);
     }
   }
 }
