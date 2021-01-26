@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MatchSchema } from './interfaces/match.schema';
+import { MatchesService } from './matches.service';
 
 @Module({
   imports: [
@@ -11,5 +12,7 @@ import { MatchSchema } from './interfaces/match.schema';
       },
     ]),
   ],
+  providers: [MatchesService],
+  exports: [MatchesService],
 })
 export class MatchesModule {}
