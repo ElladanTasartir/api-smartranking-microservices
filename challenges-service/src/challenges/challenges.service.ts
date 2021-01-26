@@ -5,12 +5,15 @@ import { Model } from 'mongoose';
 import { Challenge } from './interfaces/challenge.interface';
 import { ChallengeStatus } from './enums/challenge-status.enum';
 import { UpdateChallengeDTO } from './dtos/update-challenge.dto';
+import { MatchesService } from 'src/matches/matches.service';
+import { InsertMatchDTO } from 'src/matches/dtos/insert-match.dto';
 
 @Injectable()
 export class ChallengesService {
   constructor(
     @InjectModel('Challenge')
     private challengesModel: Model<Challenge>,
+    private matchesService: MatchesService,
   ) {}
 
   async findChallengesByPlayerId(_id: string): Promise<Challenge[]> {
@@ -35,6 +38,47 @@ export class ChallengesService {
     return createdChallenge.save();
   }
 
+  async insertMatch(insertMatchDTO: InsertMatchDTO): Promise<Challenge> {
+    const {
+      _id,
+      match: { def },
+    } = insertMatchDTO;
+
+    const challenge = await this.findChallengeById(_id);
+
+    const playerIsInTheChallenge = challenge.players.filter(
+      (player) => String(player) === def,
+    );
+
+    console.log(playerIsInTheChallenge);
+
+    if (!playerIsInTheChallenge.length) {
+      throw new RpcException(`Player ${def} is not in the challenge`);
+    }
+
+    if (challenge.status === ChallengeStatus.FINISHED) {
+      throw new RpcException(
+        `Can't insert a match in already finished challenge`,
+      );
+    }
+
+    if (challenge.status !== ChallengeStatus.ACCEPTED) {
+      throw new RpcException(`Only accepted challenges can receive a match`);
+    }
+
+    const match = await this.matchesService.insertMatch(
+      challenge,
+      insertMatchDTO,
+    );
+
+    challenge.status = ChallengeStatus.FINISHED;
+    challenge.match = match._id;
+
+    await challenge.save();
+
+    return challenge.populate('match').execPopulate();
+  }
+
   async updateChallenge(
     updateChallengeDTO: UpdateChallengeDTO,
   ): Promise<Challenge> {
@@ -50,5 +94,11 @@ export class ChallengesService {
     foundChallenge.answered_at = challenge.date;
 
     return foundChallenge.save();
+  }
+
+  async deleteChallenge(_id: string): Promise<void> {
+    const challengeToDelete = await this.findChallengeById(_id);
+
+    await challengeToDelete.remove();
   }
 }
