@@ -50,8 +50,6 @@ export class ChallengesService {
       (player) => String(player) === def,
     );
 
-    console.log(playerIsInTheChallenge);
-
     if (!playerIsInTheChallenge.length) {
       throw new RpcException(`Player ${def} is not in the challenge`);
     }
