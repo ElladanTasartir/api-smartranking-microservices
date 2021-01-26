@@ -1,11 +1,12 @@
 import { Controller, Logger } from '@nestjs/common';
 import {
   Ctx,
+  EventPattern,
   MessagePattern,
   Payload,
   RmqContext,
-  RpcException,
 } from '@nestjs/microservices';
+import { InsertMatchDTO } from 'src/matches/dtos/insert-match.dto';
 import { ChallengesService } from './challenges.service';
 import { UpdateChallengeDTO } from './dtos/update-challenge.dto';
 import { Challenge } from './interfaces/challenge.interface';
@@ -48,19 +49,22 @@ export class ChallengesController {
     const channel = context.getChannelRef();
     const message = context.getMessage();
 
-    try {
-      const createdChallenge = this.challengesService.createChallenge(
-        challenge,
-      );
+    channel.ack(message);
 
-      channel.ack(message);
+    return this.challengesService.createChallenge(challenge);
+  }
 
-      return createdChallenge;
-    } catch (err) {
-      throw new RpcException(
-        `There was an error creating the challenge: ${err.message}`,
-      );
-    }
+  @MessagePattern('insert-match')
+  async insertMatch(
+    @Payload() insertMatchDTO: InsertMatchDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<Challenge> {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+
+    channel.ack(message);
+
+    return this.challengesService.insertMatch(insertMatchDTO);
   }
 
   @MessagePattern('update-challenge')
@@ -71,16 +75,21 @@ export class ChallengesController {
     const channel = context.getChannelRef();
     const message = context.getMessage();
 
-    try {
-      const updatedChallenge = await this.challengesService.updateChallenge(
-        updateChallengeDTO,
-      );
+    channel.ack(message);
 
-      channel.ack(message);
+    return this.challengesService.updateChallenge(updateChallengeDTO);
+  }
 
-      return updatedChallenge;
-    } catch (err) {
-      throw new RpcException(err.message);
-    }
+  @EventPattern('delete-challenge')
+  async deleteChallenge(
+    @Payload() _id: string,
+    @Ctx() context: RmqContext,
+  ): Promise<void> {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+
+    channel.ack(message);
+
+    await this.challengesService.deleteChallenge(_id);
   }
 }
