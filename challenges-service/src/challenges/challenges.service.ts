@@ -17,11 +17,11 @@ export class ChallengesService {
   ) {}
 
   async findChallengesByPlayerId(_id: string): Promise<Challenge[]> {
-    return this.challengesModel.find().where('players').in([_id]);
+    return this.challengesModel.find().where('players').in([_id]).populate('match');
   }
 
   async findChallengeById(_id: string): Promise<Challenge> {
-    const challenge = await this.challengesModel.findOne({ _id });
+    const challenge = await this.challengesModel.findOne({ _id }).populate('match');
 
     if (!challenge) {
       throw new RpcException(`Challenge with the ID "${_id}" doesn't exist`);
