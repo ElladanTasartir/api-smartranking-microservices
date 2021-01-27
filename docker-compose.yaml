@@ -70,19 +70,19 @@ services:
       - rabbitmq:rabbitmq
     command: yarn start:dev
 
-    rankings-service:
-      restart: on-failure
-      depends_on: 
-        - mongodb
-        - rabbitmq
-      container_name: rankings-service-smartranking
-      volumes:
-        - ./rankings-service:/usr/src/app:cached
-        - ./rankings-service/node_modules
-      build:
-        context: ./rankings-service
-      links:
-        - mongodb:mongodb
-        - rabbitmq:rabbitmq
-      command: yarn start:dev
+  rankings-service:
+    restart: on-failure
+    depends_on: 
+      - mongodb
+      - rabbitmq
+    container_name: rankings-service-smartranking
+    volumes:
+      - ./rankings-service:/usr/src/app:cached
+      - ./rankings-service/node_modules
+    build:
+      context: ./rankings-service
+    links:
+      - mongodb:mongodb
+      - rabbitmq:rabbitmq
+    command: yarn start:dev
     
