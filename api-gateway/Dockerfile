@@ -10,6 +10,6 @@ COPY . .
 
 RUN yarn build
 
-EXPOSE 3333
+EXPOSE 8080
 
 CMD ["node", "dist/main"]
