@@ -7,6 +7,7 @@ import {
 } from '@nestjs/microservices';
 import { ChallengesController } from './challenges.controller';
 import { Services } from '../common/enums/services.enum';
+import { Environment } from 'src/common/enums/env.enum';
 
 @Module({
   providers: [
@@ -16,8 +17,8 @@ import { Services } from '../common/enums/services.enum';
         const clientConfig: RmqOptions = {
           transport: Transport.RMQ,
           options: {
-            urls: [configService.get<string>('RABBITMQ_HOST')],
-            queue: configService.get<string>('RABBITMQ_QUEUE_CHALLENGES'),
+            urls: [configService.get<string>(Environment.RABBITMQ_HOST)],
+            queue: configService.get<string>(Environment.RABBITMQ_QUEUE_CHALLENGES),
           },
         };
         return ClientProxyFactory.create(clientConfig);
@@ -30,8 +31,10 @@ import { Services } from '../common/enums/services.enum';
         const clientConfig: RmqOptions = {
           transport: Transport.RMQ,
           options: {
-            urls: [configService.get<string>('RABBITMQ_HOST')],
-            queue: configService.get<string>('RABBITMQ_QUEUE_ADMIN'),
+            urls: [configService.get<string>(
+              Environment.RABBITMQ_HOST
+            )],
+            queue: configService.get<string>(Environment.RABBITMQ_QUEUE_ADMIN),
           },
         };
         return ClientProxyFactory.create(clientConfig);
