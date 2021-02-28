@@ -22,11 +22,12 @@ import { FindParamDTO } from '../common/dtos/find-param.dto';
 import { UpdatePlayerAvatarDTO } from './dtos/update-player-avatar.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LocalService } from 'src/uploads/local.service';
+import { Services } from 'src/common/enums/services.enum';
 
 @Controller('api/v1/players')
 export class PlayersController {
   constructor(
-    @Inject('admin-backend')
+    @Inject(Services.ADMIN_BACKEND)
     private clientAdminBackend: ClientProxy,
     private localService: LocalService,
   ) {}

@@ -16,6 +16,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { FindParamDTO } from 'src/common/dtos/find-param.dto';
+import { Services } from 'src/common/enums/services.enum';
 import { Player } from '../players/interfaces/player.interface';
 import { CreateChallengeDTO } from './dtos/create-challenge.dto';
 import { InsertMatchDTO } from './dtos/insert-match.dto';
@@ -24,9 +25,9 @@ import { UpdateChallengeDTO } from './dtos/update-challenge.dto';
 @Controller('api/v1/challenges')
 export class ChallengesController {
   constructor(
-    @Inject('challenges-service')
+    @Inject(Services.CHALLENGES_SERVICE)
     private clientChallengesService: ClientProxy,
-    @Inject('admin-backend')
+    @Inject(Services.ADMIN_BACKEND)
     private clientAdminBackend: ClientProxy,
   ) {}
 

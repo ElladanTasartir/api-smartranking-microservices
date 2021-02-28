@@ -5,6 +5,7 @@ import {
   RmqOptions,
   Transport,
 } from '@nestjs/microservices';
+import { Services } from 'src/common/enums/services.enum';
 import { UploadsModule } from '../uploads/uploads.module';
 import { PlayersController } from './players.controller';
 
@@ -13,7 +14,7 @@ import { PlayersController } from './players.controller';
   controllers: [PlayersController],
   providers: [
     {
-      provide: 'admin-backend',
+      provide: Services.ADMIN_BACKEND,
       useFactory: (configService: ConfigService) => {
         const clientConfig: RmqOptions = {
           transport: Transport.RMQ,

@@ -6,11 +6,12 @@ import {
   Transport,
 } from '@nestjs/microservices';
 import { ChallengesController } from './challenges.controller';
+import { Services } from '../common/enums/services.enum';
 
 @Module({
   providers: [
     {
-      provide: 'challenges-service',
+      provide: Services.CHALLENGES_SERVICE,
       useFactory: (configService: ConfigService) => {
         const clientConfig: RmqOptions = {
           transport: Transport.RMQ,
@@ -24,7 +25,7 @@ import { ChallengesController } from './challenges.controller';
       inject: [ConfigService],
     },
     {
-      provide: 'admin-backend',
+      provide: Services.ADMIN_BACKEND,
       useFactory: (configService: ConfigService) => {
         const clientConfig: RmqOptions = {
           transport: Transport.RMQ,

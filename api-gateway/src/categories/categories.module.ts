@@ -5,13 +5,14 @@ import {
   RmqOptions,
   Transport,
 } from '@nestjs/microservices';
+import { Services } from 'src/common/enums/services.enum';
 import { CategoriesController } from './categories.controller';
 
 @Module({
   controllers: [CategoriesController],
   providers: [
     {
-      provide: 'admin-backend',
+      provide: Services.ADMIN_BACKEND,
       useFactory: (configService: ConfigService) => {
         const clientConfig: RmqOptions = {
           transport: Transport.RMQ,

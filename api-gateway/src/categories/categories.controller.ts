@@ -14,11 +14,12 @@ import { Observable } from 'rxjs';
 import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { FindParamDTO } from '../common/dtos/find-param.dto';
 import { UpdateCategoryDTO } from './dtos/update-category.dto';
+import { Services } from 'src/common/enums/services.enum';
 
 @Controller('api/v1/categories')
 export class CategoriesController {
   constructor(
-    @Inject('admin-backend')
+    @Inject(Services.ADMIN_BACKEND)
     private clientAdminBackend: ClientProxy,
   ) {}
 
