@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Challenge } from './interfaces/challenge.interface';
@@ -11,6 +11,8 @@ import { InsertMatchDTO } from 'src/matches/dtos/insert-match.dto';
 @Injectable()
 export class ChallengesService {
   constructor(
+    @Inject('rankings-service')
+    private clientRankgingsService: ClientProxy,
     @InjectModel('Challenge')
     private challengesModel: Model<Challenge>,
     private matchesService: MatchesService,
@@ -73,6 +75,10 @@ export class ChallengesService {
     challenge.match = match._id;
 
     await challenge.save();
+
+    this.clientRankgingsService.emit('process-match', {
+      match,
+    });
 
     return challenge.populate('match').execPopulate();
   }
